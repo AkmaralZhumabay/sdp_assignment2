@@ -1,25 +1,9 @@
-import abstractfactory.AlpineGreenhouseFactory;
-import abstractfactory.DesertGreenhouseFactory;
-import abstractfactory.GreenhouseFactory;
-import abstractfactory.TropicalGreenhouseFactory;
-
+import abstractfactory.*;
 import client.GreenhouseController;
-
-import factorymethod.DesertIrrigationCreator;
-import factorymethod.TropicalIrrigationCreator;
-
-import product.irrigation.AlpineIrrigation;
-import product.irrigation.DesertIrrigation;
-import product.irrigation.TropicalIrrigation;
-
-import product.climate.AlpineClimateControl;
-import product.climate.DesertClimateControl;
-import product.climate.TropicalClimateControl;
-
-import product.lighting.AlpineLighting;
-import product.lighting.DesertLighting;
-import product.lighting.TropicalLighting;
-
+import factorymethod.*;
+import product.irrigation.*;
+import product.climate.*;
+import product.lighting.*;
 import selector.FactorySelector;
 
 import org.junit.jupiter.api.Test;
@@ -57,26 +41,29 @@ class GreenhouseTest {
 
  @Test
  void tropicalProductsCompatible() {
-  GreenhouseController app =
-          new GreenhouseController(new TropicalGreenhouseFactory());
-
-  assertTrue(app.componentsAreCompatible());
+  assertTrue(
+          new GreenhouseController(
+                  new TropicalGreenhouseFactory()
+          ).componentsAreCompatible()
+  );
  }
 
  @Test
  void desertProductsCompatible() {
-  GreenhouseController app =
-          new GreenhouseController(new DesertGreenhouseFactory());
-
-  assertTrue(app.componentsAreCompatible());
+  assertTrue(
+          new GreenhouseController(
+                  new DesertGreenhouseFactory()
+          ).componentsAreCompatible()
+  );
  }
 
  @Test
  void alpineProductsCompatible() {
-  GreenhouseController app =
-          new GreenhouseController(new AlpineGreenhouseFactory());
-
-  assertTrue(app.componentsAreCompatible());
+  assertTrue(
+          new GreenhouseController(
+                  new AlpineGreenhouseFactory()
+          ).componentsAreCompatible()
+  );
  }
 
  @Test
@@ -106,18 +93,22 @@ class GreenhouseTest {
  @Test
  void morningPreparationUsesMultipleProducts() {
   String result =
-          new GreenhouseController(new TropicalGreenhouseFactory())
-                  .morningPreparation();
+          new GreenhouseController(
+                  new TropicalGreenhouseFactory()
+          ).morningPreparation();
 
-  assertTrue(result.contains("humidity"));
-  assertTrue(result.contains("light"));
+  assertTrue(
+          result.contains("humidity")
+                  && result.contains("light")
+  );
  }
 
  @Test
  void growthCycleUsesAllThreeProducts() {
   String result =
-          new GreenhouseController(new DesertGreenhouseFactory())
-                  .growthCycle(20);
+          new GreenhouseController(
+                  new DesertGreenhouseFactory()
+          ).growthCycle(20);
 
   assertTrue(result.contains("30%"));
   assertTrue(result.contains("16 hours"));
@@ -126,11 +117,12 @@ class GreenhouseTest {
 
  @Test
  void resourceScoreReflectsFamilyBehavior() {
-  int score =
-          new GreenhouseController(new DesertGreenhouseFactory())
-                  .dailyResourceScore(20);
-
-  assertEquals(56, score);
+  assertEquals(
+          56,
+          new GreenhouseController(
+                  new DesertGreenhouseFactory()
+          ).dailyResourceScore(20)
+  );
  }
 
  @Test
@@ -157,8 +149,10 @@ class GreenhouseTest {
           new TropicalIrrigationCreator()
                   .runWateringJob("Orchid Zone", 20);
 
-  assertTrue(result.contains("Orchid Zone"));
-  assertTrue(result.contains("20L"));
+  assertTrue(
+          result.contains("Orchid Zone")
+                  && result.contains("20L")
+  );
  }
 
  @Test
@@ -170,9 +164,32 @@ class GreenhouseTest {
   );
  }
 
+ // Part G - fourth product family
+ @Test
+ void fourthHydroponicFamilyWorks() {
+  GreenhouseController app =
+          new GreenhouseController(
+                  new HydroponicGreenhouseFactory()
+          );
+
+  assertTrue(app.componentsAreCompatible());
+  assertEquals("HYDROPONIC", app.family());
+  assertTrue(app.growthCycle(10).contains("20L"));
+ }
+
+ // Part G - runtime selection of fourth family
+ @Test
+ void runtimeSelectsFourthFamily() {
+  assertInstanceOf(
+          HydroponicGreenhouseFactory.class,
+          FactorySelector.from("hydroponic")
+  );
+ }
+
  @Test
  void clientDependsOnAbstraction() {
-  GreenhouseFactory factory = new TropicalGreenhouseFactory();
+  GreenhouseFactory factory =
+          new TropicalGreenhouseFactory();
 
   GreenhouseController client =
           new GreenhouseController(factory);
