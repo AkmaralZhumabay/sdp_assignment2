@@ -1,0 +1,95 @@
+@startuml
+
+skinparam packageStyle rectangle
+
+package "Factory Method" {
+
+    interface IrrigationSystem
+
+    abstract class IrrigationCreator {
+        # createIrrigationSystem(): IrrigationSystem
+        + runWateringJob(zone, liters): String
+    }
+
+    class TropicalIrrigationCreator
+    class DesertIrrigationCreator
+    class AlpineIrrigationCreator
+    class HydroponicIrrigationCreator
+
+    IrrigationCreator <|-- TropicalIrrigationCreator
+    IrrigationCreator <|-- DesertIrrigationCreator
+    IrrigationCreator <|-- AlpineIrrigationCreator
+    IrrigationCreator <|-- HydroponicIrrigationCreator
+
+    IrrigationCreator ..> IrrigationSystem : creates / uses
+}
+
+
+package "Products" {
+
+    interface ClimateControl
+    interface LightingSystem
+
+    class TropicalIrrigation
+    class DesertIrrigation
+    class AlpineIrrigation
+    class HydroponicIrrigation
+
+    class TropicalClimateControl
+    class DesertClimateControl
+    class AlpineClimateControl
+    class HydroponicClimateControl
+
+    class TropicalLighting
+    class DesertLighting
+    class AlpineLighting
+    class HydroponicLighting
+
+    IrrigationSystem <|.. TropicalIrrigation
+    IrrigationSystem <|.. DesertIrrigation
+    IrrigationSystem <|.. AlpineIrrigation
+    IrrigationSystem <|.. HydroponicIrrigation
+
+    ClimateControl <|.. TropicalClimateControl
+    ClimateControl <|.. DesertClimateControl
+    ClimateControl <|.. AlpineClimateControl
+    ClimateControl <|.. HydroponicClimateControl
+
+    LightingSystem <|.. TropicalLighting
+    LightingSystem <|.. DesertLighting
+    LightingSystem <|.. AlpineLighting
+    LightingSystem <|.. HydroponicLighting
+}
+
+
+package "Abstract Factory" {
+
+    interface GreenhouseFactory
+
+    class TropicalGreenhouseFactory
+    class DesertGreenhouseFactory
+    class AlpineGreenhouseFactory
+    class HydroponicGreenhouseFactory
+
+    GreenhouseFactory <|.. TropicalGreenhouseFactory
+    GreenhouseFactory <|.. DesertGreenhouseFactory
+    GreenhouseFactory <|.. AlpineGreenhouseFactory
+    GreenhouseFactory <|.. HydroponicGreenhouseFactory
+
+    GreenhouseFactory ..> IrrigationSystem : creates
+    GreenhouseFactory ..> ClimateControl : creates
+    GreenhouseFactory ..> LightingSystem : creates
+}
+
+
+class GreenhouseController
+class FactorySelector
+class Main
+
+GreenhouseController --> GreenhouseFactory : receives one factory
+FactorySelector ..> GreenhouseFactory : selects at runtime
+
+Main --> FactorySelector
+Main --> GreenhouseController
+
+@enduml
