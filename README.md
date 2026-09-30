@@ -179,7 +179,9 @@ This demonstrates that the architecture is extensible and follows the Open/Close
 
 ## 9. Automated Tests
 
-The project contains JUnit 5 automated tests covering:
+The project contains **19 JUnit 5 automated tests**.
+
+The tests cover:
 
 - Tropical family creation
 - Desert family creation
